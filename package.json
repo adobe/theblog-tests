@@ -1,0 +1,39 @@
+{
+  "name": "@adobe/theblog-tests",
+  "version": "1.1.0",
+  "description": "Helix Basic Example",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "env TEST_DOMAIN=hlx.page mocha --exit test/**/*",
+    "test:smoke": "env TEST_DOMAIN=$TEST_DOMAIN mocha --exit test/**/*",
+    "lint": "./node_modules/.bin/eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/theblog-tests"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/adobe/theblog-tests/issues"
+  },
+  "homepage": "https://github.com/adobe/theblog-tests",
+  "dependencies": {},
+  "devDependencies": {
+    "@adobe/eslint-config-helix": "1.1.0",
+    "eslint": "6.5.1",
+    "eslint-plugin-header": "3.0.0",
+    "eslint-plugin-import": "2.18.2",
+    "jquery": "3.4.1",
+    "jsdom": "15.2.1",
+    "junit-report-builder": "1.3.3",
+    "lint-staged": "8.2.1",
+    "mocha": "6.2.2",
+    "mocha-junit-reporter": "1.23.2",
+    "request-promise-native": "1.0.8"
+  },
+  "lint-staged": {
+    "*.js": "eslint"
+  },
+  "config": {}
+}
