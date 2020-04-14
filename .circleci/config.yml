@@ -38,6 +38,7 @@ workflows:
     jobs:
     - build
     - operations:
+        context: Project Helix
         filters:
           branches:
             only: master
