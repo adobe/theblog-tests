@@ -14,6 +14,13 @@ jobs:
   operations:
     executor: node10
     steps:
+      - checkout
+      - run:
+          name: install npm 6.9.0
+          command: sudo npm -g install npm@6.9.0
+      - run:
+          name: Installing Dependencies
+          command: npm ci
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Uptime
           newrelic_url: https://theblog.helix-demo.xyz
@@ -38,8 +45,8 @@ workflows:
   version: 2
   build:
     jobs:
-    - operations:
-        context: Project Helix
-        filters:
-          branches:
-            only: master
+      - operations:
+          context: Project Helix
+          filters:
+            branches:
+              only: master
