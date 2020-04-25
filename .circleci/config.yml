@@ -35,7 +35,7 @@ jobs:
           newrelic_group_policy: Customer Sites
 
       - helix-post-deploy/monitoring:
-          newrelic_name: Adobe Blog -Content (uncached)
+          newrelic_name: Adobe Blog - Content (uncached)
           newrelic_url: https://theblog-adobe.hlx.page
           newrelic_type: browser
           newrelic_script: ./monitoring/scripted_browser.js
