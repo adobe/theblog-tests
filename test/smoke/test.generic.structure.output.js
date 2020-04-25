@@ -21,7 +21,7 @@ if (!testDomain) {
 }
 const testURLs = [
   `https://theblog-adobe.${testDomain}/`,
-  `https://theblog-adobe.${testDomain}/en/archive/2020/introducing-public-beta.html`,
+  `https://theblog-adobe.${testDomain}/en/drafts/migrated/2020/03/19/introducing-public-beta.html`,
 ];
 
 testURLs.forEach((url) => {
