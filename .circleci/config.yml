@@ -23,13 +23,13 @@ jobs:
           command: npm ci
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Uptime
-          newrelic_url: https://theblog.helix-demo.xyz
+          newrelic_url: https://blog.adobe.com
           newrelic_script: ./monitoring/api_test.js
           newrelic_group_policy: Customer Sites
 
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Content (cached)
-          newrelic_url: https://theblog.helix-demo.xyz
+          newrelic_url: https://blog.adobe.com
           newrelic_type: browser
           newrelic_script: ./monitoring/scripted_browser.js
           newrelic_group_policy: Customer Sites
