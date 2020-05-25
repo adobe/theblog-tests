@@ -32,7 +32,7 @@ describe(`Test theblog post page content for page ${url}`, () => {
 
   it('contains the expected content', () => {
     assert.equal('Introducing Public Beta', $('title').text(), 'title');
-    assert.equal(1, $('img[src="/hlx_4c7a30f3829288695304bf420fd0f3900f95d286.jpg"]').length, 'hero banner');
+    assert.equal(1, $('img[src="/hlx_20d6699b0815a3a7f4b124694d6a6ef556871cad.jpeg"]').length, 'hero banner');
     assert.equal(1, $('p:contains("by Nakiesha Koss")').length, 'author');
     assert.equal(1, $('p:contains("posted on 03-19-2020")').length, 'posted on date');
   });
