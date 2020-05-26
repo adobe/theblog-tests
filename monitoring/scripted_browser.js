@@ -18,10 +18,10 @@ const assert = require('assert');
 
 $browser.get('$$$URL$$$')
   // Get articles
-  .then(() => $browser.findElements($driver.By.css('li.ais-Hits-item'))
+  .then(() => $browser.findElements($driver.By.css('.card'))
     .then((articles) => {
       // Check if there are enough articles
-      assert.equal(articles.length, 13, `Expected 13 articles, got ${articles.length}`);
+      assert.ok(articles.length >= 13, `Expected at least 13 articles, got ${articles.length}`);
       // Check if first item is special
       return articles[0].getCssValue('flex-direction').then((value) => {
         assert.equal(value, 'row', `Expected flex-direction of first article to be "row", got "${value}"" instead.`);
