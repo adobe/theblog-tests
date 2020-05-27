@@ -17,7 +17,7 @@ const { JSDOM } = require('jsdom');
 
 const HTTP_REQUEST_TIMEOUT_MSEC = 20000;
 
-async function getContentAs$(url) {
+async function getContentAs$(url, contentType = 'text/html') {
   try {
     const res = await rp({
       uri: url,
@@ -27,8 +27,9 @@ async function getContentAs$(url) {
       resolveWithFullResponse: true,
     });
     assert.equal(res.statusCode, 200);
-    return jquery(new JSDOM(res.body).window);
+    return jquery(new JSDOM(res.body, { contentType }).window);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log('response headers', e.response.headers);
     throw e;
   }
