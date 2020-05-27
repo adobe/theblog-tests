@@ -14,8 +14,7 @@
 const assert = require('assert');
 const utils = require('./utils');
 
-// const testDomain = process.env.TEST_DOMAIN;
-const testDomain = 'hlx.page';
+const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
   throw new Error('Test domain missing, must be set by process.env.TEST_DOMAIN');
 }
