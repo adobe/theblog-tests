@@ -15,7 +15,7 @@ const rp = require('request-promise-native');
 const jquery = require('jquery');
 const { JSDOM } = require('jsdom');
 
-const HTTP_REQUEST_TIMEOUT_MSEC = 20000;
+const HTTP_REQUEST_TIMEOUT_MSEC = 40000;
 
 async function getContentAs$(url, contentType = 'text/html') {
   try {
