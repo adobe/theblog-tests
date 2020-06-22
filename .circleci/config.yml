@@ -32,10 +32,16 @@ jobs:
           path: junit
       - store_artifacts:
           path: junit
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - project/node_modules
 
   operations:
     executor: node10
     steps:
+      - attach_workspace:
+          at: /home/circleci
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Uptime
           newrelic_url: https://blog.adobe.com
