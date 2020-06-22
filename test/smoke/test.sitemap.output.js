@@ -32,7 +32,7 @@ testURLs.forEach((url) => {
       $ = await utils.getContentAs$(url, 'text/xml');
     });
 
-    it.skip('contains the expected structure', () => {
+    it('contains the expected structure', () => {
       assert.equal($('urlset').length, 1, 'has urlset tag');
       assert.ok($('urlset > url').length > 0, 'has 1+ url tags');
       assert.equal(new URL($('urlset > url > loc')[0].textContent.trim()).hostname, `theblog-adobe.${testDomain}`, 'uses correct host name');
