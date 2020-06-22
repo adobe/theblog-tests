@@ -5,22 +5,37 @@ executors:
     - image: circleci/node:10-stretch
       environment:
         NPM_CONFIG_PREFIX: "~/.npm-global"
-    working_directory: ~/repo
+        working_directory: ~/repo
 
 orbs:
   helix-post-deploy: adobe/helix-post-deploy@1.6.0
 
 jobs:
-  operations:
+  build:
     executor: node10
     steps:
       - checkout
+
       - run:
-          name: install npm 6.9.0
-          command: sudo npm -g install npm@6.9.0
+          name: install latest npm
+          command: sudo npm -g install npm
       - run:
           name: Installing Dependencies
-          command: npm ci
+          command: npm install
+      - run: mkdir junit
+      - run:
+          name: Test and Code Coverage
+          command: npm run test
+          environment:
+            MOCHA_FILE: junit/test-results.xml
+      - store_test_results:
+          path: junit
+      - store_artifacts:
+          path: junit
+
+  operations:
+    executor: node10
+    steps:
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Uptime
           newrelic_url: https://blog.adobe.com
@@ -45,7 +60,10 @@ workflows:
   version: 2
   build:
     jobs:
+      - build
       - operations:
+          requires:
+            - build
           context: Project Helix
           filters:
             branches:
