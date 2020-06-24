@@ -19,7 +19,7 @@ const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
   throw new Error('Test domain missing, must be set by process.env.TEST_DOMAIN');
 }
-const url = `https://theblog-adobe.${testDomain}/en/drafts/migrated/2020/03/19/introducing-public-beta.html`;
+const url = `https://theblog-adobe.${testDomain}/en/publish/2020/03/19/introducing-public-beta.html`;
 
 describe(`Test theblog post page content for page ${url}`, () => {
   let $;

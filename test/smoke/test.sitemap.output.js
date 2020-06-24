@@ -35,7 +35,7 @@ testURLs.forEach((url) => {
     it('contains the expected structure', () => {
       assert.equal($('urlset').length, 1, 'has urlset tag');
       assert.ok($('urlset > url').length > 0, 'has 1+ url tags');
-      assert.equal(new URL($('urlset > url > loc')[0].textContent.trim()).hostname, `theblog-adobe.${testDomain}`, 'uses correct host name');
+      assert.equal(new URL($('urlset > url > loc')[0].textContent.trim()).hostname, `blog.adobe.com`, 'uses correct host name');
     });
   });
 });
