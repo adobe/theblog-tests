@@ -11,26 +11,27 @@
  */
 
 const assert = require('assert');
-const rp = require('request-promise-native');
-const jquery = require('jquery');
+const { fetch } = require('@adobe/helix-fetch');
 const { JSDOM } = require('jsdom');
+const jquery = require('jquery');
 
 const HTTP_REQUEST_TIMEOUT_MSEC = 120000;
+let res;
 
 async function getContentAs$(url, contentType = 'text/html') {
   try {
-    const res = await rp({
-      uri: url,
+    res = await fetch(url,
+    {
       headers: {
       // 'x-debug': '<use fastly service id here>',
       },
-      resolveWithFullResponse: true,
     });
-    assert.equal(res.statusCode, 200);
-    return jquery(new JSDOM(res.body, { contentType }).window);
+
+    assert.equal(res.status, 200);
+    assert.equal(res.ok, true);
+    const body = await res.text();
+    return jquery(new JSDOM(body, { contentType }).window);
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('response headers', e.response.headers);
     throw e;
   }
 }
