@@ -34,7 +34,7 @@ describe(`Test theblog post page content for page ${url}`, () => {
     const hero = $('img[src="/hlx_20d6699b0815a3a7f4b124694d6a6ef556871cad.jpeg"]');
     assert.equal('Introducing Public Beta', $('title').text(), 'title');
     assert.equal(1, hero.length, 'hero banner present');
-    assert.notEqual(0, hero.get(0).naturalWidth, 'hero banner loaded successfully');
+    assert.notEqual(0, hero[0].naturalWidth, 'hero banner loaded successfully');
     assert.equal(1, $('p:contains("by Nakiesha Koss")').length, 'author');
     assert.equal(1, $('p:contains("posted on 03-19-2020")').length, 'posted on date');
   });
