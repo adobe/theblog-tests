@@ -9,6 +9,7 @@ executors:
 
 orbs:
   helix-post-deploy: adobe/helix-post-deploy@1.6.0
+  puppeteer: threetreeslight/puppeteer@0.1.2
 
 jobs:
   build:
@@ -23,6 +24,7 @@ jobs:
           name: Installing Dependencies
           command: npm install
       - run: mkdir junit
+      - puppeteer/install
       - run:
           name: Test and Code Coverage
           command: npm run test
