@@ -23,24 +23,17 @@ if (!testDomain) {
 const urlPrefix = `https://theblog-adobe.${testDomain}`;
 const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
 
-describe(`Test theblog post page content for ${url}`, () => {
-  let $;
+describe(`Test theblog post page content for page ${url}`, () => {
 
-  // "function" is needed for "this", to set timeout
-  before(async function before() {
+  it('contains the expected content', async function testContent() {
     this.timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
-    $ = await utils.getContentAs$(url);
-  });
-
-  it('contains the expected content', () => {
+    const $ = await utils.getContentAs$(url);
     assert.equal('Introducing Public Beta', $('title').text(), 'title');
     assert.equal(1, $('img[src="/hlx_20d6699b0815a3a7f4b124694d6a6ef556871cad.jpeg"]').length, 'hero banner');
     assert.equal(1, $('p:contains("by Nakiesha Koss")').length, 'author');
     assert.equal(1, $('p:contains("posted on 03-19-2020")').length, 'posted on date');
   });
-});
 
-describe(`Test theblog post page requests for ${url}`, () => {
   it('makes the expected requests', async () => {
     let numReqs = 0;
     const failedReqs = [];
@@ -67,5 +60,5 @@ describe(`Test theblog post page requests for ${url}`, () => {
     assert.equal(0, failedReqs.length, `The following request(s) failed:\n${failedReqs.join('\n')}`);
     // no wrong image content types
     assert.equal(0, wrongImgs.length, `The following image(s) had an invalid content type:\n${wrongImgs.join('\n')}`);
-  });
+  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
 });
