@@ -24,7 +24,6 @@ const urlPrefix = `https://theblog-adobe.${testDomain}`;
 const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
 
 describe(`Test theblog post page content for page ${url}`, () => {
-
   it('contains the expected content', async () => {
     const $ = await utils.getContentAs$(url);
     assert.equal('Introducing Public Beta', $('title').text(), 'title');

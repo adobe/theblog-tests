@@ -21,11 +21,11 @@ let res;
 async function getContentAs$(url, contentType = 'text/html') {
   try {
     res = await fetch(url,
-    {
-      headers: {
-      // 'x-debug': '<use fastly service id here>',
-      },
-    });
+      {
+        headers: {
+          // 'x-debug': '<use fastly service id here>',
+        },
+      });
 
     assert.equal(res.status, 200);
     assert.equal(res.ok, true);
