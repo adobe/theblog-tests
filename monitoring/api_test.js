@@ -17,6 +17,42 @@
  */
 const assert = require('assert');
 
+function randomArray(digits, max){
+  return Array.from({length: digits}, () => Math.round(Math.random() * max));
+}
+
+function detectFails(sitePage) {
+  return (err, response, body) => {
+    let count = 0;
+    if (response.statusCode !== 200) {
+      console.log(`${sitePage} === ${response.statusCode}`);
+      count += 1;
+    }
+    if (count > 0) {
+      assert.fail(`${count} page(s) are not delivering 200 status code`);
+    }
+  };
+}
+
+function checkSites(err, response, body) {
+  assert.equal(response.statusCode, 200, 'Expected a 200 OK response');
+  const rand = randomArray(10, 256);
+  const arr = JSON.parse(body);
+  rand.forEach((idx) => {
+    const { path } = arr[idx];
+    const sitePage = `https://blog.adobe.com/${path}`;
+    $http.get(sitePage, detectFails(sitePage));
+  });
+}
+
+function checkFeatured(err, response, body) {
+  const rgx = new RegExp('(?<=[\[\<])https://blog.adobe.com/en/(publish)?[0-9]{4}/[0-9]{2}/[0-9]{2}/.*?.html', 'g');
+  let match;
+  while ((match = rgx.exec(body)) !== null) {
+    $http.get(match[0], detectFails(match[0]));
+  }
+}
+
 // $http -> https://github.com/request/request
 $http.get({
   url: '$$$URL$$$',
@@ -75,3 +111,7 @@ $http.get({
   }
   assert.equal(response.statusCode, 200, `Expected a 200 OK response, got ${response.statusCode}`);
 });
+
+$http.get('https://blog.adobe.com/en/query-index.json?limit=256&offset=0', checkSites);
+$http.get('https://blog.adobe.com/index.md', checkFeatured);
+
