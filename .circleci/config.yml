@@ -65,11 +65,11 @@ jobs:
           newrelic_group_policy: Customer Sites
 
       - helix-post-deploy/monitoring:
-          newrelic_name: Adobe Blog - Home Page
-          newrelic_script: ./monitoring/homepage_test.js
-          newrelic_group_policy: Customer Sites
-          newrelic_locations: AWS_US_WEST_1
-          newrelic_frequency: 5
+        newrelic_name: Adobe Blog - Homepage (cached)
+        newrelic_script: ./monitoring/homepage_test.js
+        newrelic_group_policy: Customer Sites
+        newrelic_locations: AWS_US_WEST_1
+        newrelic_frequency: 5
 
 workflows:
   version: 2

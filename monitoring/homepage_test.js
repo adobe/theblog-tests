@@ -9,43 +9,48 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global $browser $driver */
+/* eslint-disable no-console */
+/* global $http $util $secure */
 /*
- * Scripted Browser API Documentation:
- * https://docs.newrelic.com/docs/synthetics/new-relic-synthetics/scripting-monitors/writing-scripted-browsers
+ * Synthetics API Test Documentation:
+ * https://docs.newrelic.com/docs/synthetics/new-relic-synthetics/scripting-monitors/write-synthetics-api-tests
  */
 const assert = require('assert');
 
+function randomArray(digits, max){
+  return Array.from({length: digits}, () => Math.round(Math.random() * max));
+}
+
 function detectFails(sitePage) {
-  return (err, response, body) => {
-    let count = 0;
-    if (response.statuscode !== 200) {
-      console.log(`${sitePage} === ${response.statusCode}`);
-      count += 1;
-    }
-    if (count > 0) {
-      assert.fail(`${count} page(s) are not delivering 200 status code`);
+  return (response) => {
+    if (response.statusCode !== 200) {
+      assert.fail(`${sitePage} === ${response.statusCode}`);
     }
   };
 }
 
 function checkSites(err, response, body) {
   assert.equal(response.statusCode, 200, 'Expected a 200 OK response');
+  const fails = [];
+  const rand = randomArray(10, 256);
   const arr = JSON.parse(body);
-  arr.forEach((site) => {
-    const { path } = site;
+  rand.forEach((idx) => {
+    const { path } = arr[idx];
     const sitePage = `https://blog.adobe.com/${path}`;
-    $http.get(sitePage, detectFails(sitePage));
+    let resp;
+    $http.get(sitePage).on("response", detectFails(sitePage))
   });
 }
 
 function checkFeatured(err, response, body) {
   const rgx = new RegExp('(?<=[\[\<])https://blog.adobe.com/en/(publish)?[0-9]{4}/[0-9]{2}/[0-9]{2}/.*?.html', 'g');
   let match;
+  const fails = [];
   while ((match = rgx.exec(body)) !== null) {
-    $http.get(match[0], detectFails(match[0]));
+    $http.get(match[0]).on('response', detectFails(match[0]));
   }
 }
 
-$http.get('https://blog.adobe.com/en/query-index.json?limit=64&offset=0', checkSites);
 $http.get('https://blog.adobe.com/index.md', checkFeatured);
+$http.get('https://blog.adobe.com/en/query-index.json?limit=256&offset=0', checkSites);
+

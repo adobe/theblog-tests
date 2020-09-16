@@ -52,6 +52,19 @@
             "args":[
                 "up"
             ]
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "homepage",
+            "program": "${workspaceFolder}/monitoring/homepage_test",
+            "args": [
+                "--timeout",
+                "999999",
+                "--colors",
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
     ]
 }
