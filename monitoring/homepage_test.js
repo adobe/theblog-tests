@@ -20,7 +20,8 @@ const assert = require('assert');
 function detectFails(sitePage) {
   return (response) => {
     if (response.statusCode !== 200) {
-      assert.fail(`${response.statusCode} detected at ${sitePage}`);
+      console.log(response.headers)
+      assert.fail(`${response.statusCode} detected at ${sitePage} with stausMessage: ${response.statusMessage}`);
     }
   };
 }
