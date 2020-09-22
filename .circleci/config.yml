@@ -63,7 +63,7 @@ jobs:
           newrelic_type: browser
           newrelic_script: ./monitoring/scripted_browser.js
           newrelic_group_policy: Customer Sites
-
+      
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Homepage (cached)
           newrelic_script: ./monitoring/homepage_test.js

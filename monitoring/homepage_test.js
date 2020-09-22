@@ -45,4 +45,4 @@ function checkFeatured(err, response, body) {
 }
 
 $http.get('https://blog.adobe.com/index.md', checkFeatured);
-$http.get('https://blog.adobe.com/en/query-index.json?limit=256&offset=0', checkSites);
+$http.get('https://blog.adobe.com/en/query-index.json?limit=4&offset=0', checkSites);
