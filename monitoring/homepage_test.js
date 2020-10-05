@@ -28,8 +28,8 @@ function detectFails(sitePage) {
 
 function checkSites(err, response, body) {
   assert.equal(response.statusCode, 200, 'Expected a 200 OK response');
-  const arr = JSON.parse(body);
-  arr.forEach((url) => {
+  const { data } = JSON.parse(body);
+  data.forEach((url) => {
     const { path } = url;
     const sitePage = `https://blog.adobe.com/${path}`;
     $http.get(sitePage).on('response', detectFails(sitePage));
@@ -44,5 +44,13 @@ function checkFeatured(err, response, body) {
   }
 }
 
-$http.get('https://blog.adobe.com/index.md', checkFeatured);
-$http.get('https://blog.adobe.com/en/query-index.json?limit=4&offset=0', checkSites);
+$http.get('https://blog.adobe.com/index.md', {
+  headers: {
+    'Cache-Control': 'no-store'
+  }
+}, checkFeatured);
+$http.get('https://blog.adobe.com/en/query-index.json?limit=15&offset=0', {
+  headers: {
+    'Cache-Control': 'no-store'
+  }
+}, checkSites);
