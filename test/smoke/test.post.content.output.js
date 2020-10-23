@@ -24,8 +24,9 @@ const urlPrefix = `https://theblog-adobe.${testDomain}`;
 const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
 
 describe(`Test theblog post page content for page ${url}`, () => {
-  it.only('contains the expected content', async () => {
+  it('contains the expected content', async () => {
     const $ = await utils.getContentAs$(url);
+    console.log($('body'));
     assert.equal('Introducing Public Beta', $('title').text(), 'title');
     assert.equal(1, $('img[src="/hlx_20d6699b0815a3a7f4b124694d6a6ef556871cad"]').length, 'hero banner');
     assert.equal(1, $('p:contains("by Nakiesha Koss")').length, 'author');
