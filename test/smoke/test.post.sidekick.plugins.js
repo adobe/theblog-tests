@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-env mocha */
-/* global window document navigator */
+/* global window document */
 
 const assert = require('assert');
 const puppeteer = require('puppeteer');
