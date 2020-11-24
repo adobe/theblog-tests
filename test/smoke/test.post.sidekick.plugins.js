@@ -61,7 +61,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     page = null;
   });
 
-  it('sidekick shows the expected plugins', async () => {
+  it('shows the expected number of  plugins', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     // retrieve plugins
@@ -72,7 +72,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     assert.strictEqual(plugins.length, 5, 'wrong number of plugins');
   }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
 
-  it.only('copies predicted url to clipboard', async () => {
+  it('generates predicted url', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     await execPlugin(page, 'predicted-url');
@@ -81,7 +81,33 @@ describe(`Test theblog sidekick for page ${url}`, () => {
         () => document.querySelector('.hlx-sk-overlay > div p:nth-of-type(2)').textContent,
       ),
       'https://blog.adobe.com/en/2020/03/19/introducing-public-beta.html',
-      'predicted url not copied to clipboard',
+      'predicted url not generated',
+    );
+  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
+
+  it('shows card preview', async () => {
+    await page.goto(url, { waitUntil: 'networkidle2' });
+    await injectSidekick(page);
+    await execPlugin(page, 'card-preview');
+    assert.strictEqual(
+      await page.evaluate(
+        () => document.querySelector('.hlx-sk-overlay .card h2 a').textContent,
+      ),
+      'Introducing Public Beta',
+      'card preview not shown',
+    );
+  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
+
+  it('copies article data to clipboard', async () => {
+    await page.goto(url, { waitUntil: 'networkidle2' });
+    await injectSidekick(page);
+    await execPlugin(page, 'article-data');
+    assert.strictEqual(
+      await page.evaluate(
+        () => document.querySelector('.hlx-sk-overlay > div').textContent,
+      ),
+      'Article data copied to clipboard',
+      'article data not copied',
     );
   }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
 });
