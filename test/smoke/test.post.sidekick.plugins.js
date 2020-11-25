@@ -24,7 +24,7 @@ const urlPrefix = `https://theblog--adobe.${testDomain}`;
 const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
 
 const injectSidekick = async (p) => {
-  await p.evaluate(() => {
+  await p.evaluate((domain) => {
     window.hlxSidekickConfig = {
       project: 'Blog',
       host: 'blog.adobe.com',
@@ -32,8 +32,8 @@ const injectSidekick = async (p) => {
       repo: 'theblog',
     };
     document.head.appendChild(document.createElement('script'))
-      .src = `https://www.${process.env.TEST_DOMAIN}/tools/sidekick/app.js`;
-  });
+      .src = `https://www.${domain}/tools/sidekick/app.js`;
+  }, testDomain);
   return p.waitFor(5000);
 };
 
