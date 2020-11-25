@@ -32,7 +32,7 @@ const injectSidekick = async (p) => {
       repo: 'theblog',
     };
     document.head.appendChild(document.createElement('script'))
-      .src = 'https://www.hlx.page/tools/sidekick/app.js';
+      .src = `https://www.${process.env.TEST_DOMAIN}/tools/sidekick/app.js`;
   });
   return p.waitFor(5000);
 };
