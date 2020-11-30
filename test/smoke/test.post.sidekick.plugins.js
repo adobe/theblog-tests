@@ -61,7 +61,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     page = null;
   });
 
-  it.skip('shows the expected number of  plugins', async () => {
+  it('shows the expected number of  plugins', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     // retrieve plugins
@@ -72,7 +72,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     assert.strictEqual(plugins.length, 5, 'wrong number of plugins');
   }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
 
-  it.skip('generates predicted url', async () => {
+  it('generates predicted url', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     await execPlugin(page, 'predicted-url');
@@ -85,7 +85,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     );
   }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
 
-  it.skip('shows card preview', async () => {
+  it('shows card preview', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     await execPlugin(page, 'card-preview');
@@ -98,7 +98,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     );
   }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
 
-  it.skip('copies article data to clipboard', async () => {
+  it('copies article data to clipboard', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     await execPlugin(page, 'article-data');
