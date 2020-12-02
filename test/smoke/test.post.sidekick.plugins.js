@@ -25,12 +25,14 @@ const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
 
 const injectSidekick = async (p) => {
   await p.evaluate((domain) => {
-    window.hlxSidekickConfig = {
+    (window.hlx = window.hlx || {}).sidekickConfig = {
       project: 'Blog',
       host: 'blog.adobe.com',
       owner: 'adobe',
       repo: 'theblog',
     };
+    // TODO: remove support for legacy sidekick
+    window.hlxSidekickConfig = window.hlx.sidekickConfig;
     document.head.appendChild(document.createElement('script'))
       .src = `https://www.${domain}/tools/sidekick/app.js`;
   }, testDomain);
