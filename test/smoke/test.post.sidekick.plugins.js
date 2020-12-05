@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-env mocha */
-/* global window document */
+/* global window document KeyboardEvent */
 
 const assert = require('assert');
 const puppeteer = require('puppeteer');
@@ -24,6 +24,8 @@ const urlPrefix = `https://theblog--adobe.${testDomain}`;
 const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
 
 const injectSidekick = async (p) => {
+  // dismiss update dialog
+  p.on('dialog', (dialog) => dialog.dismiss());
   await p.evaluate((domain) => {
     (window.hlx = window.hlx || {}).sidekickConfig = {
       project: 'Blog',
