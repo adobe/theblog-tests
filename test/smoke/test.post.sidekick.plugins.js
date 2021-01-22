@@ -84,7 +84,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       await page.evaluate(
         () => document.querySelector('.hlx-sk-overlay > div p:nth-of-type(2)').textContent,
       ),
-      'https://blog.adobe.com/en/2020/03/19/introducing-public-beta.html',
+      'https://blog.adobe.com/en/publish/2020/03/19/introducing-public-beta.html',
       'predicted url not generated',
     );
   }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
