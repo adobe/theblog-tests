@@ -82,4 +82,4 @@ workflows:
           context: Project Helix
           filters:
             branches:
-              only: master
+              only: main
