@@ -16,25 +16,29 @@ const { JSDOM } = require('jsdom');
 const jquery = require('jquery');
 
 const HTTP_REQUEST_TIMEOUT_MSEC = 120000;
-let res;
 
 async function getContentAs$(url, contentType = 'text/html') {
-  try {
-    res = await fetch(url,
-      {
-        headers: {
-          // 'x-debug': '<use fastly service id here>',
-        },
-      });
+  const res = await fetch(url,
+    {
+      headers: {
+        // 'x-debug': '<use fastly service id here>',
+      },
+    });
 
-    assert.equal(res.status, 200);
-    assert.equal(res.ok, true);
-    const body = await res.text();
-    return jquery(new JSDOM(body, { contentType }).window);
-  } catch (e) {
-    throw e;
-  }
+  assert.strictEqual(res.status, 200);
+  assert.strictEqual(res.ok, true);
+  const body = await res.text();
+  return jquery(new JSDOM(body, { contentType }).window);
 }
 
-module.exports.HTTP_REQUEST_TIMEOUT_MSEC = HTTP_REQUEST_TIMEOUT_MSEC;
-module.exports.getContentAs$ = getContentAs$;
+const assertLater = async (delay = 3000) => new Promise((resolve) => {
+  setTimeout(async () => {
+    resolve(assert);
+  }, delay);
+});
+
+module.exports = {
+  HTTP_REQUEST_TIMEOUT_MSEC,
+  getContentAs$,
+  assertLater,
+};

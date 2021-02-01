@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-env mocha */
-/* global window document KeyboardEvent */
+/* global window document */
 
 const assert = require('assert');
 const puppeteer = require('puppeteer');
-const utils = require('./utils');
+const { assertLater, HTTP_REQUEST_TIMEOUT_MSEC } = require('./utils');
 
 const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
@@ -65,7 +65,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     page = null;
   });
 
-  it('shows the expected number of  plugins', async () => {
+  it('shows the expected number of plugins', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     // retrieve plugins
@@ -74,7 +74,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       .map((plugin) => plugin.textContent));
     browser.close();
     assert.strictEqual(plugins.length, 6, 'wrong number of plugins');
-  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
+  }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('generates predicted url', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
@@ -87,7 +87,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       'https://blog.adobe.com/en/publish/2020/03/19/introducing-public-beta.html',
       'predicted url not generated',
     );
-  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
+  }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('shows card preview', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
@@ -100,7 +100,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       'Introducing Public Beta',
       'card preview not shown',
     );
-  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
+  }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('copies article data to clipboard', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
@@ -113,5 +113,29 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       'Article data copied to clipboard',
       'article data not copied',
     );
-  }).timeout(utils.HTTP_REQUEST_TIMEOUT_MSEC);
+  }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
+
+  it('publishes article with and without /publish in path', async () => {
+    const publishedUrls = [];
+    page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (req.url().startsWith('https://adobeioruntime.net/')) {
+        publishedUrls.push(new URL(req.url()).searchParams.get('path'));
+        req.respond({
+          status: 200,
+          body: JSON.stringify([{ status: 'ok', url }]),
+        });
+      } else {
+        req.continue();
+      }
+    });
+    await page.goto(url, { waitUntil: 'networkidle2' });
+    await injectSidekick(page);
+    await execPlugin(page, 'publish');
+    (await assertLater()).deepStrictEqual(
+      publishedUrls,
+      [new URL(url).pathname, new URL(url).pathname.replace('/publish/', '/')],
+      'article not published with and without /publish',
+    );
+  }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 });
