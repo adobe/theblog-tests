@@ -14,7 +14,7 @@
 
 const assert = require('assert');
 const puppeteer = require('puppeteer');
-const { assertLater, HTTP_REQUEST_TIMEOUT_MSEC } = require('./utils');
+const { HTTP_REQUEST_TIMEOUT_MSEC } = require('./utils');
 
 const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
@@ -54,12 +54,14 @@ describe(`Test theblog sidekick for page ${url}`, () => {
   let browser;
   let page;
 
-  beforeEach(async () => {
+  beforeEach(async function setup() {
+    this.timeout(10000);
     browser = await puppeteer.launch();
     page = await browser.newPage();
   });
 
-  afterEach(async () => {
+  afterEach(async function teardown() {
+    this.timeout(10000);
     await browser.close();
     browser = null;
     page = null;
@@ -116,23 +118,30 @@ describe(`Test theblog sidekick for page ${url}`, () => {
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('publishes article with and without /publish in path', async () => {
-    const publishedUrls = [];
-    page.setRequestInterception(true);
-    page.on('request', (req) => {
-      if (req.url().startsWith('https://adobeioruntime.net/')) {
-        publishedUrls.push(new URL(req.url()).searchParams.get('path'));
-        req.respond({
-          status: 200,
-          body: JSON.stringify([{ status: 'ok', url }]),
-        });
-      } else {
-        req.continue();
-      }
+    const publishedUrls = await new Promise((resolve, reject) => {
+      const urls = [];
+      page.setRequestInterception(true);
+      page.on('request', (req) => {
+        if (req.url().startsWith('https://adobeioruntime.net/')) {
+          urls.push(new URL(req.url()).searchParams.get('path'));
+          req.respond({
+            status: 200,
+            body: JSON.stringify([{ status: 'ok', url }]),
+          });
+        } else {
+          req.continue();
+        }
+        if (urls.length === 2) {
+          resolve(urls);
+        }
+      });
+      page
+        .goto(url, { waitUntil: 'networkidle2' })
+        .then(() => injectSidekick(page))
+        .then(() => execPlugin(page, 'publish'));
+      setTimeout(() => reject(new Error('timed out')), HTTP_REQUEST_TIMEOUT_MSEC - 2000);
     });
-    await page.goto(url, { waitUntil: 'networkidle2' });
-    await injectSidekick(page);
-    await execPlugin(page, 'publish');
-    (await assertLater()).deepStrictEqual(
+    assert.deepStrictEqual(
       publishedUrls,
       [new URL(url).pathname, new URL(url).pathname.replace('/publish/', '/')],
       'article not published with and without /publish',
