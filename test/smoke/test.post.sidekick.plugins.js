@@ -91,7 +91,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     );
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
-  it.only('shows card preview', async () => {
+  it('shows card preview', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     await execPlugin(page, 'card-preview');
