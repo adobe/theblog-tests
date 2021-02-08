@@ -30,8 +30,11 @@ function checkSites(err, response, body) {
   assert.equal(response.statusCode, 200, 'Expected a 200 OK response');
   const { data } = JSON.parse(body);
   data.forEach((url) => {
-    const { path } = url;
-    const sitePage = `https://blog.adobe.com/${path}`;
+    let { path } = url;
+    if (!path.startsWith('/')) {
+      path = `/${path}`;
+    }
+    const sitePage = `https://blog.adobe.com${path}`;
     $http.get(sitePage).on('response', detectFails(sitePage));
   });
 }
