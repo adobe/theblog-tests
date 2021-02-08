@@ -91,17 +91,29 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     );
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
-  it('shows card preview', async () => {
+  it.only('shows card preview', async () => {
     await page.goto(url, { waitUntil: 'networkidle2' });
     await injectSidekick(page);
     await execPlugin(page, 'card-preview');
-    assert.strictEqual(
-      await page.evaluate(
-        () => document.querySelector('.hlx-sk-overlay .card h2 a').textContent,
-      ),
-      'Introducing Public Beta',
-      'card preview not shown',
-    );
+    await new Promise((resolve) => {
+      page
+        .waitForSelector('.hlx-sk-overlay .card')
+        .then(() => page.evaluate(() => {
+          try {
+            return document.querySelector('.hlx-sk-overlay .card h2 a').textContent;
+          } catch (e) {
+            return undefined;
+          }
+        }))
+        .then((text) => {
+          assert.strictEqual(
+            text,
+            'Introducing Public Beta',
+            'card preview not shown',
+          );
+          resolve();
+        });
+    });
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('copies article data to clipboard', async () => {
