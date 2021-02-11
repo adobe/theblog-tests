@@ -49,6 +49,8 @@ jobs:
           newrelic_url: https://blog.adobe.com
           newrelic_script: ./monitoring/api_test.js
           newrelic_group_policy: Customer Sites
+          newrelic_locations: AWS_US_WEST_1, AWS_EU_CENTRAL_1
+          newrelic_frequency: 1
 
       - helix-post-deploy/monitoring:
           newrelic_name: Adobe Blog - Content (cached)
