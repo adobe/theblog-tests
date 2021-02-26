@@ -21,7 +21,8 @@ if (!testDomain) {
   throw new Error('Test domain missing, must be set by process.env.TEST_DOMAIN');
 }
 const urlPrefix = `https://theblog--adobe.${testDomain}`;
-const url = `${urlPrefix}/en/publish/2020/03/19/introducing-public-beta.html`;
+const testPath = '/en/publish/2020/03/19/introducing-public-beta.html';
+const url = `${urlPrefix}${testPath}`;
 
 const injectSidekick = async (p) => {
   // dismiss update dialog
@@ -86,7 +87,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       await page.evaluate(
         () => document.querySelector('.hlx-sk-overlay > div p:nth-of-type(2)').textContent,
       ),
-      'https://blog.adobe.com/en/publish/2020/03/19/introducing-public-beta.html',
+      `https://blog.adobe.com${testPath}`,
       'predicted url not generated',
     );
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
@@ -135,7 +136,10 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       page.setRequestInterception(true);
       page.on('request', (req) => {
         if (req.url().startsWith('https://adobeioruntime.net/')) {
-          urls.push(new URL(req.url()).searchParams.get('path'));
+          const purgePath = new URL(req.url()).searchParams.get('path');
+          if (purgePath && (purgePath === testPath || purgePath === testPath.replace('/publish/', '/'))) {
+            urls.push(new URL(req.url()).searchParams.get('path'));
+          }
           req.respond({
             status: 200,
             body: JSON.stringify([{ status: 'ok', url }]),
