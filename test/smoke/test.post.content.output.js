@@ -45,7 +45,7 @@ describe(`Test theblog post page content for page ${url}`, () => {
         failedReqs.push(`${resp.url()}: ${resp.status()}`);
       }
       // test content types of hlx images
-      if (/.*\/hlx_.*(jpeg|jpg|png|gif|webp).*/.test(resp.url())
+      if (/.*_.*(jpeg|jpg|png|gif|webp).*/.test(resp.url())
         && !resp.headers()['content-type'].startsWith('image/')) {
         wrongImgs.push(`${resp.url()}: ${resp.headers()['content-type']}`);
       }
