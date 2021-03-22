@@ -10,28 +10,56 @@
  * governing permissions and limitations under the License.
  */
 /* global $browser $driver */
+/* eslint-disable no-console */
+
 /*
  * Scripted Browser API Documentation:
  * https://docs.newrelic.com/docs/synthetics/new-relic-synthetics/scripting-monitors/writing-scripted-browsers
  */
 const assert = require('assert');
 
-$browser.get('$$$URL$$$')
-  // Get articles
-  .then(() => {
-    console.log('Page loaded. Waiting now for \'.load-more\' element...');
-    return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
-  }).then(() => {
-    console.log('\'.load-more\' found. Retrieving the articles...');
-    return $browser.findElements($driver.By.css('.card'));
-  }).then((articles) => {
-    // Check if there are enough articles
-    console.log(`Found ${articles.length} articles in the page.`);
-    assert.ok(articles.length >= 13, `Expected at least 13 articles, got ${articles.length}`);
-    // Check if first item is special
-    return articles[0].getCssValue('flex-direction');
-  })
-  .then((value) => {
-    console.log(`flex-direction of first article is ${value}.`);
-    assert.equal(value, 'row', `Expected flex-direction of first article to be "row", got "${value}"" instead.`);
-  });
+const baseUrl = '$$$URL$$$';
+
+/**
+ * Checks if the specified homepage is loading and showing the expected content.
+ * @param {string} url The URL of the homepage to check
+ */
+async function checkHomepage(url) {
+  $browser.get(url)
+    // Get articles
+    .then(() => {
+      console.log(`Page ${url} loaded. Waiting now for '.load-more' element...`);
+      return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
+    }).then(() => {
+      console.log('\'.load-more\' found. Retrieving the articles...');
+      return $browser.findElements($driver.By.css('.card'));
+    }).then((articles) => {
+      // Check if there are enough articles
+      console.log(`Found ${articles.length} articles in the page.`);
+      assert.ok(articles.length >= 13, `Expected at least 13 articles, got ${articles.length}`);
+      // Check if first item is special
+      return articles[0].getCssValue('flex-direction');
+    })
+    .then((value) => {
+      console.log(`flex-direction of first article is ${value}.`);
+      assert.strictEqual(value, 'row', `Expected flex-direction of first article to be "row", got "${value}" instead.`);
+      return true;
+    });
+}
+
+// Check the default and all regional homepages
+(async () => {
+  await Promise.all([
+    '/',
+    '/br/',
+    '/de/',
+    '/en/apac.html',
+    '/en/uk.html',
+    '/es/',
+    '/es/latam.html',
+    '/fr/',
+    '/it/',
+    '/jp/',
+    '/ko/',
+  ].map((path) => checkHomepage(`${baseUrl}${path}`)));
+})();
