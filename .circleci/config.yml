@@ -45,7 +45,7 @@ jobs:
       - attach_workspace:
           at: /home/circleci
       - helix-post-deploy/monitoring:
-          newrelic_name: Adobe Blog - Uptime
+          newrelic_name: Adobe Blog - Uptime (prod)
           newrelic_url: https://blog.adobe.com
           newrelic_script: ./monitoring/api_test.js
           newrelic_group_policy: Customer Sites
@@ -53,21 +53,28 @@ jobs:
           newrelic_frequency: 1
 
       - helix-post-deploy/monitoring:
-          newrelic_name: Adobe Blog - Content (cached)
+          newrelic_name: Adobe Blog - Content (prod)
           newrelic_url: https://blog.adobe.com
           newrelic_type: browser
           newrelic_script: ./monitoring/scripted_browser.js
           newrelic_group_policy: Customer Sites
 
       - helix-post-deploy/monitoring:
-          newrelic_name: Adobe Blog - Content (uncached)
+          newrelic_name: Adobe Blog - Content (live)
+          newrelic_url: https://theblog--adobe.hlx.live
+          newrelic_type: browser
+          newrelic_script: ./monitoring/scripted_browser.js
+          newrelic_group_policy: Customer Sites
+      
+      - helix-post-deploy/monitoring:
+          newrelic_name: Adobe Blog - Content (preview)
           newrelic_url: https://theblog--adobe.hlx.page
           newrelic_type: browser
           newrelic_script: ./monitoring/scripted_browser.js
           newrelic_group_policy: Customer Sites
       
       - helix-post-deploy/monitoring:
-          newrelic_name: Adobe Blog - Homepage (cached)
+          newrelic_name: Adobe Blog - Index (prod)
           newrelic_script: ./monitoring/homepage_test.js
           newrelic_group_policy: Customer Sites
           newrelic_locations: AWS_US_WEST_1
