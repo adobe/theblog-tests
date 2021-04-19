@@ -29,14 +29,16 @@ async function checkHomepage(url) {
     // Get articles
     .then(async () => {
       console.log(`Page ${url} loaded.`);
-      // First make sure the homepage is not static
-      let staticMarker;
-      try {
-        staticMarker = await $browser.waitForAndFindElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'), 5000);
-      } catch (e) {
-        console.log('This homepage is static: backend must be down!');
+      if (url === `${baseUrl}/`) {
+        // First make sure the homepage is not static
+        let staticMarker;
+        try {
+          staticMarker = await $browser.waitForAndFindElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'), 5000);
+        } catch (e) {
+          console.log('This homepage is static: backend must be down!');
+        }
+        assert.ok(!staticMarker);
       }
-      assert.ok(!staticMarker);
       console.log('Waiting now for ".load-more" element...');
       return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
     }).then(() => {
