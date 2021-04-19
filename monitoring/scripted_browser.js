@@ -33,7 +33,7 @@ async function checkHomepage(url) {
         // First make sure the homepage is not static
         let staticMarker;
         try {
-          staticMarker = await $browser.waitForAndFindElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'), 5000);
+          staticMarker = await $browser.findElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'));
         } catch (e) {
           // good
         }
