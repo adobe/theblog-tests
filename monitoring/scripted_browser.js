@@ -35,9 +35,11 @@ async function checkHomepage(url) {
         try {
           staticMarker = await $browser.waitForAndFindElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'), 5000);
         } catch (e) {
-          console.log('This homepage is static: backend must be down!');
+          // good
         }
-        assert.ok(!staticMarker);
+        if (staticMarker) {
+          assert.fail('This homepage is static: backend must be down!');
+        }
       }
       console.log('Waiting now for ".load-more" element...');
       return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
