@@ -136,9 +136,20 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       page.setRequestInterception(true);
       page.on('request', (req) => {
         if (req.url().startsWith('https://adobeioruntime.net/')) {
+          // legacy sidekick
           const purgePath = new URL(req.url()).searchParams.get('path');
           if (purgePath && (purgePath === testPath || purgePath === testPath.replace('/publish/', '/'))) {
-            urls.push(new URL(req.url()).searchParams.get('path'));
+            urls.push(purgePath);
+          }
+          req.respond({
+            status: 200,
+            body: JSON.stringify([{ status: 'ok', url }]),
+          });
+        } else if (req.method() === 'POST') {
+          // new sidekick
+          const purgePath = new URL(req.url()).pathname;
+          if (purgePath === testPath || purgePath === testPath.replace('/publish/', '/')) {
+            urls.push(purgePath);
           }
           req.respond({
             status: 200,
