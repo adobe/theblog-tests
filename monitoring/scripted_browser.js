@@ -27,8 +27,21 @@ const baseUrl = '$$$URL$$$';
 async function checkHomepage(url) {
   $browser.get(url)
     // Get articles
-    .then(() => {
-      console.log(`Page ${url} loaded. Waiting now for '.load-more' element...`);
+    .then(async () => {
+      console.log(`Page ${url} loaded.`);
+      if (url === `${baseUrl}/`) {
+        // First make sure the homepage is not static
+        let staticMarker;
+        try {
+          staticMarker = await $browser.findElement($driver.By.id('___WARNING__STATIC_HOMEPAGE___'));
+        } catch (e) {
+          // good
+        }
+        if (staticMarker) {
+          assert.fail('This homepage is static: backend must be down!');
+        }
+      }
+      console.log('Waiting now for ".load-more" element...');
       return $browser.waitForAndFindElement($driver.By.css('.load-more'), 60000);
     }).then(() => {
       console.log('\'.load-more\' found. Retrieving the articles...');
