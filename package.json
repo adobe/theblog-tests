@@ -18,7 +18,6 @@
     "url": "https://github.com/adobe/theblog-tests/issues"
   },
   "homepage": "https://github.com/adobe/theblog-tests",
-  "dependencies": {},
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
     "@adobe/helix-fetch": "2.1.0",
