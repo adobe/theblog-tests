@@ -76,7 +76,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       .from(document.querySelectorAll('.hlx-sk > div button'))
       .map((plugin) => plugin.textContent));
     browser.close();
-    assert.strictEqual(plugins.length, 6, 'wrong number of plugins');
+    assert.strictEqual(plugins.length, 7, 'wrong number of plugins');
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('generates predicted url', async () => {
