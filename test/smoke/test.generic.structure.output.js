@@ -44,9 +44,9 @@ testURLs.forEach((url) => {
     });
 
     it('contains specific head.html elements', () => {
-      assert.equal(1, $('link[href="/style.css"]').length, 'style from head.html include');
+      assert.equal(1, $('link[href="/style/v2/style.css"]').length, 'style from head.html include');
       assert.equal(1, $('link[href="/hlx_fonts/inq1xob.css"]').length, 'fonts from head.html include');
-      assert.equal(1, $('script[src="/scripts.js"]').length, 'scripts from head.html include');
+      assert.equal(1, $('script[src="/scripts/v2/scripts.js"]').length, 'scripts from head.html include');
     });
   });
 });
