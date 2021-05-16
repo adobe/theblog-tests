@@ -75,8 +75,10 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     const plugins = await page.evaluate(() => Array
       .from(document.querySelectorAll('.hlx-sk > div button'))
       .map((plugin) => plugin.textContent));
+    // env switcher compatibility
+    const envSwitcher = await page.evaluate(() => document.querySelector('.hlx-sk > div.env'));
     browser.close();
-    assert.strictEqual(plugins.length, 7, 'wrong number of plugins');
+    assert.strictEqual(plugins.length, envSwitcher ? 9 : 7, 'wrong number of plugins');
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('generates predicted url', async () => {
