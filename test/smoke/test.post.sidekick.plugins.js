@@ -16,6 +16,7 @@ const assert = require('assert');
 const puppeteer = require('puppeteer');
 const { HTTP_REQUEST_TIMEOUT_MSEC } = require('./utils');
 
+const debug = false;
 const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
   throw new Error('Test domain missing, must be set by process.env.TEST_DOMAIN');
@@ -28,16 +29,15 @@ const injectSidekick = async (p) => {
   // dismiss update dialog
   p.on('dialog', (dialog) => dialog.dismiss());
   await p.evaluate((domain) => {
-    (window.hlx = window.hlx || {}).sidekickConfig = {
-      project: 'Blog',
-      host: 'blog.adobe.com',
+    const s = document.createElement('script');
+    s.id = 'hlx-sk-app';
+    s.src = `https://www.${domain}/tools/sidekick/app.js`;
+    s.dataset.config = JSON.stringify({
       owner: 'adobe',
       repo: 'theblog',
-    };
-    // TODO: remove support for legacy sidekick
-    window.hlxSidekickConfig = window.hlx.sidekickConfig;
-    document.head.appendChild(document.createElement('script'))
-      .src = `https://www.${domain}/tools/sidekick/app.js`;
+      ref: 'master',
+    });
+    document.head.append(s);
   }, testDomain);
   return p.waitFor(5000);
 };
@@ -57,15 +57,19 @@ describe(`Test theblog sidekick for page ${url}`, () => {
 
   beforeEach(async function setup() {
     this.timeout(10000);
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      devtools: debug,
+    });
     page = await browser.newPage();
   });
 
   afterEach(async function teardown() {
     this.timeout(10000);
-    await browser.close();
-    browser = null;
-    page = null;
+    if (!debug) {
+      await browser.close();
+      browser = null;
+      page = null;
+    }
   });
 
   it('shows the expected number of plugins', async () => {
@@ -77,7 +81,6 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       .map((plugin) => plugin.textContent));
     // env switcher compatibility
     const envSwitcher = await page.evaluate(() => document.querySelector('.hlx-sk > div.env'));
-    browser.close();
     assert.strictEqual(plugins.length, envSwitcher ? 9 : 7, 'wrong number of plugins');
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
