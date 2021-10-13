@@ -21,7 +21,7 @@ const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
   throw new Error('Test domain missing, must be set by process.env.TEST_DOMAIN');
 }
-const urlPrefix = `https://fix-card-preview--theblog--adobe.${testDomain}`;
+const urlPrefix = `https://master--theblog--adobe.${testDomain}`;
 const testPath = '/en/publish/2020/03/19/introducing-public-beta.html';
 const url = `${urlPrefix}${testPath}`;
 
@@ -35,7 +35,7 @@ const injectSidekick = async (p) => {
     s.dataset.config = JSON.stringify({
       owner: 'adobe',
       repo: 'theblog',
-      ref: 'fix-card-preview',
+      ref: 'master',
     });
     document.head.append(s);
   }, testDomain);
