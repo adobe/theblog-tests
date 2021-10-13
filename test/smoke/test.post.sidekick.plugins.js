@@ -21,7 +21,7 @@ const testDomain = process.env.TEST_DOMAIN;
 if (!testDomain) {
   throw new Error('Test domain missing, must be set by process.env.TEST_DOMAIN');
 }
-const urlPrefix = `https://theblog--adobe.${testDomain}`;
+const urlPrefix = `https://fix-card-preview--theblog--adobe.${testDomain}`;
 const testPath = '/en/publish/2020/03/19/introducing-public-beta.html';
 const url = `${urlPrefix}${testPath}`;
 
@@ -35,7 +35,7 @@ const injectSidekick = async (p) => {
     s.dataset.config = JSON.stringify({
       owner: 'adobe',
       repo: 'theblog',
-      ref: 'master',
+      ref: 'fix-card-preview',
     });
     document.head.append(s);
   }, testDomain);
@@ -48,7 +48,7 @@ const execPlugin = async (p, id) => p.evaluate((pluginId) => {
     evt.initEvent('click', true, false);
     el.dispatchEvent(evt);
   };
-  click(window.document.querySelector(`.hlx-sk .${pluginId} button`));
+  click(window.hlx.sidekick.get(pluginId).querySelector('button'));
 }, id);
 
 describe(`Test theblog sidekick for page ${url}`, () => {
@@ -77,11 +77,9 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     await injectSidekick(page);
     // retrieve plugins
     const plugins = await page.evaluate(() => Array
-      .from(document.querySelectorAll('.hlx-sk > div button'))
+      .from(window.hlx.sidekick.shadowRoot.querySelectorAll('.hlx-sk > div button'))
       .map((plugin) => plugin.textContent));
-    // env switcher compatibility
-    const envSwitcher = await page.evaluate(() => document.querySelector('.hlx-sk > div.env'));
-    assert.strictEqual(plugins.length, envSwitcher ? 9 : 7, 'wrong number of plugins');
+    assert.strictEqual(plugins.length, 9, 'wrong number of plugins');
   }).timeout(HTTP_REQUEST_TIMEOUT_MSEC);
 
   it('generates predicted url', async () => {
@@ -90,7 +88,10 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     await execPlugin(page, 'predicted-url');
     assert.strictEqual(
       await page.evaluate(
-        () => document.querySelector('.hlx-sk-overlay > div p:nth-of-type(2)').textContent,
+        () => window.hlx.sidekick
+          .shadowRoot
+          .querySelector('.hlx-sk-overlay > div p:nth-of-type(2)')
+          .textContent,
       ),
       `https://blog.adobe.com${testPath}`,
       'predicted url not generated',
@@ -103,14 +104,14 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     await execPlugin(page, 'card-preview');
     await new Promise((resolve) => {
       page
-        .waitForSelector('.hlx-sk-overlay .card')
-        .then(() => page.evaluate(() => {
+        .waitForSelector('#hlx-sk-card-preview .card')
+        .then((elem) => page.evaluate((card) => {
           try {
-            return document.querySelector('.hlx-sk-overlay .card h2 a').textContent;
+            return card.querySelector(':scope h2').textContent;
           } catch (e) {
             return undefined;
           }
-        }))
+        }, elem))
         .then((text) => {
           assert.strictEqual(
             text,
@@ -128,7 +129,10 @@ describe(`Test theblog sidekick for page ${url}`, () => {
     await execPlugin(page, 'article-data');
     assert.strictEqual(
       await page.evaluate(
-        () => document.querySelector('.hlx-sk-overlay > div').textContent,
+        () => window.hlx.sidekick
+          .shadowRoot
+          .querySelector('.hlx-sk-overlay > div')
+          .textContent,
       ),
       'Article data copied to clipboard',
       'article data not copied',
@@ -140,18 +144,7 @@ describe(`Test theblog sidekick for page ${url}`, () => {
       const urls = [];
       page.setRequestInterception(true);
       page.on('request', (req) => {
-        if (req.url().startsWith('https://adobeioruntime.net/')) {
-          // legacy sidekick
-          const purgePath = new URL(req.url()).searchParams.get('path');
-          if (purgePath && (purgePath === testPath || purgePath === testPath.replace('/publish/', '/'))) {
-            urls.push(purgePath);
-          }
-          req.respond({
-            status: 200,
-            body: JSON.stringify([{ status: 'ok', url }]),
-          });
-        } else if (req.method() === 'POST') {
-          // new sidekick
+        if (req.method() === 'POST') {
           const purgePath = new URL(req.url()).pathname;
           if (purgePath === testPath || purgePath === testPath.replace('/publish/', '/')) {
             urls.push(purgePath);
@@ -160,11 +153,11 @@ describe(`Test theblog sidekick for page ${url}`, () => {
             status: 200,
             body: JSON.stringify([{ status: 'ok', url }]),
           });
+          if (urls.length === 2) {
+            resolve(urls);
+          }
         } else {
           req.continue();
-        }
-        if (urls.length === 2) {
-          resolve(urls);
         }
       });
       page
