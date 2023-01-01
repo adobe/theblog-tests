@@ -8,3 +8,4 @@ logs
 deploy.sh
 hlx
 .env
+.git/
